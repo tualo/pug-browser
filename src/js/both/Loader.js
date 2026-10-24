@@ -1,7 +1,7 @@
-Ext.define('Tualo.Blueprint.Loader', {
+Ext.define('Tualo.pugBrowser.Loader', {
     singleton: true,
 
     constructor: function () {
-        Ext.Loader.setPath('Tualo.Blueprint.lazy', './jsblueprint');
+        Ext.Loader.setPath('Tualo.pugBrowser.lazy', './jspugbrowser/lazy');
     }
 });

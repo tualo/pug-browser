@@ -1,4 +1,4 @@
-Ext.define('Tualo.Blueprint.model.classic.TimeModel', {
+Ext.define('Tualo.pugBrowser.model.PUG', {
     extend: 'Ext.data.Model',
     fields: [
         { name: 'datetime', type: 'string' },

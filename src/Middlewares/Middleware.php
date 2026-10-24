@@ -9,13 +9,10 @@ class Middleware implements IMiddleware
 {
     public static function register()
     {
-        TualoApplication::use('monacoeditor', function () {
+        TualoApplication::use('pug-browser', function () {
             try {
-                TualoApplication::module('pug-browser', "
-  import { fs,configureSingle, WebStorage } from './jspugbrowser/lib/zenfs/zenfs.js';
-  await configureSingle({ backend: WebStorage });
-  fs.writeFileSync('/test.txt', 'Hallo aus ZenFS!');
-  console.log(fs.readFileSync('/test.txt', 'utf8'));", []);
+                TualoApplication::javascript('pug-browser-lib', "./jspugbrowser/lib/pugjs/pug.js", []);
+                TualoApplication::module('pug-browser', "./jspugbrowser/lib/zenfs/app.js", []);
             } catch (\Exception $e) {
                 TualoApplication::set('maintanceMode', 'on');
                 TualoApplication::addError($e->getMessage());
