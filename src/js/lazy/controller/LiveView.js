@@ -9,7 +9,6 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
         let me = this;
         me.initFunctions(window);
         me.initializePUGFiles();
-
     },
 
     initializePUGFiles: async function () {
@@ -73,7 +72,37 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
             let html = pug.render(fs.readFileSync(filename, 'utf8'), options);
             model.set('rendered', html);
             console.log('Rendered HTML set in iframe', view.getId() + '-iframe');
-            view.getComponent('frame').getEl().dom.srcdoc = html;
+
+            const iframe = view.getComponent('frame').getEl().dom;
+            const scrollY = me.scrollRestorePending && Number.isFinite(me.savedScrollY)
+                ? me.savedScrollY
+                : iframe.contentWindow.scrollY;
+            const generation = me.renderGeneration = (me.renderGeneration || 0) + 1;
+            me.savedScrollY = scrollY;
+            me.scrollRestorePending = true;
+
+            iframe.addEventListener('load', async () => {
+                if (generation !== me.renderGeneration) return;
+
+                const doc = iframe.contentDocument;
+                await doc.fonts?.ready;
+                await Promise.all(
+                    Array.from(doc.images, image => image.decode().catch(() => { }))
+                );
+
+                if (generation !== me.renderGeneration) return;
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        if (generation !== me.renderGeneration) return;
+                        iframe.contentWindow.scrollTo(0, scrollY);
+                        me.savedScrollY = iframe.contentWindow.scrollY;
+                        me.scrollRestorePending = false;
+                    });
+                });
+            }, { once: true });
+
+            iframe.srcdoc = html;
         } catch (e) {
             console.error('Error rendering Pug template:', e);
             Ext.toast({
