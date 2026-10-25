@@ -18,5 +18,26 @@ Ext.define('Tualo.pugBrowser.lazy.LiveView', {
     listeners: {
         boxready: 'onBoxReady'
     },
-    html: '<p>Bitte Zeit anfragen...</p>'
+    tools: [
+        {
+            type: 'refresh',
+            handler: 'onRefresh'
+        },
+        {
+            type: 'gear',
+            handler: 'onTest'
+        }
+    ],
+    items: [
+        {
+            xtype: 'component',
+            itemId: 'frame',
+            autoEl: {
+                tag: 'iframe',
+                id: '{id}-iframe',
+                style: 'width:100%;height:100%;',
+                src: 'about:blank'
+            }
+        }
+    ]
 });

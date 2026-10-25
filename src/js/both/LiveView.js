@@ -13,12 +13,12 @@ Ext.define('Tualo.routes.pugBrowser.LiveView', {
     handler: {
         action: function (values) {
 
-            /*
+
             Ext.getApplication().addView('Tualo.pugBrowser.lazy.LiveView', {
                 type: values.type,
                 reportnumber: values.reportnumber
             });
-            */
+
 
         },
         before: function (values, action) {
