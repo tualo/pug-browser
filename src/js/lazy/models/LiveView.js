@@ -4,14 +4,7 @@ Ext.define('Tualo.pugBrowser.lazy.models.LiveView', {
     data: {
         template: 'receipt',
         id: null,
-        rendered: null
-    },
-    formulas: {
-
-        html: function (get) {
-            var rendered = get('rendered');
-            return '<p>Einen Moment bitte...</p>';
-        }
+        rendered: null,
+        data: null
     }
-
 });

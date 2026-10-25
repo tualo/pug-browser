@@ -13,21 +13,33 @@ Ext.define('Tualo.pugBrowser.lazy.LiveView', {
     viewModel: {
         type: 'tualo_pugbrowser_liveview'
     },
-    title: 'Live View',
+    title: null,
     bodyPadding: 10,
     listeners: {
         boxready: 'onBoxReady'
     },
+    /*
     tools: [
         {
             type: 'refresh',
             handler: 'onRefresh'
-        },
-        {
-            type: 'gear',
-            handler: 'onTest'
         }
     ],
+    */
+    config: {
+        templateName: null,
+        data: null
+    },
+    applyTemplateName: function (templateName) {
+        console.log('Tualo.pugBrowser.lazy.LiveView', 'applyTemplateName', templateName);
+        this.getViewModel().set('template', templateName);
+        this.getController().update();
+    },
+    applyData: function (data) {
+        console.log('Tualo.pugBrowser.lazy.LiveView', 'applyData', data);
+        this.getViewModel().set('data', data);
+        this.getController().update();
+    },
     items: [
         {
             xtype: 'component',
