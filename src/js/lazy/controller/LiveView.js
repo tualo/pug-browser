@@ -8,7 +8,31 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
         console.log('onBoxReady');
         let me = this;
         me.initFunctions(window);
+        me.initFrameLoad();
         me.initializePUGFiles();
+    },
+    initFrameLoad: function () {
+        let me = this,
+            view = me.getView();
+
+        const iframe = view.getComponent('frame').getEl().dom;
+        iframe.addEventListener('load', () => {
+            me.onFramedLoaded();
+            view.fireEvent('frameLoaded');
+        });
+    },
+
+    onFramedLoaded: function () {
+        let me = this,
+            doc = me.getView().getFrameDocument();
+
+        doc.querySelectorAll(".editable").forEach(function (element) {
+            element.addEventListener("input", me.frameContentChanged.bind(me), false);
+        });
+    },
+    frameContentChanged: function (event) {
+        console.log('LiveView.frameContentChanged', event);
+        this.getView().fireEvent('frameContentChanged', event);
     },
 
     initializePUGFiles: async function () {
@@ -119,4 +143,4 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
         view.setLoading(false);
     }
 
-});
+});console.log('LiveView.loaded');
