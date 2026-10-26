@@ -40,25 +40,27 @@ Ext.define('Tualo.pugBrowser.lazy.LiveView', {
         this.getViewModel().set('data', data);
         this.getController().update();
     },
-    getFrameElement: function () {
-        let frame = this.getComponent('frame');
-        return frame.getEl().dom;
+    getStageElement: function () {
+        let stage = this.getComponent('stage');
+        return stage.getEl().dom;
     },
+    /*
     getFrameDocument: function () {
         console.log('Getting frame document');
         let frame = this.getComponent('frame');
         let iframe = frame.getEl().dom;
         return iframe.contentWindow.document;
     },
+    */
     items: [
         {
             xtype: 'component',
-            itemId: 'frame',
+            itemId: 'stage',
             autoEl: {
-                tag: 'iframe',
-                id: '{id}-iframe',
-                style: 'width:100%;height:100%;',
-                src: 'about:blank'
+                tag: 'div',
+                id: '{id}-stage',
+                style: 'width:100%;height:100%;    scroll-behavior: smooth; overflow: scroll; box-sizing: border-box;',
+                // src: 'about:blank'
             }
         }
     ]

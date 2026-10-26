@@ -8,30 +8,33 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
         console.log('onBoxReady');
         let me = this;
         me.initFunctions(window);
-        me.initFrameLoad();
+        me.initStageLoad();
         me.initializePUGFiles();
     },
-    initFrameLoad: function () {
+    initStageLoad: function () {
         let me = this,
             view = me.getView();
 
-        const iframe = view.getComponent('frame').getEl().dom;
+        const stage = view.getComponent('stage').getEl().dom;
+        /*
         iframe.addEventListener('load', () => {
-            me.onFramedLoaded();
+            me.onStagedLoaded();
             view.fireEvent('frameLoaded');
         });
+        */
+        console.warn('Stage element event init missing');
     },
 
-    onFramedLoaded: function () {
+    onStagedLoaded: function () {
         let me = this,
-            doc = me.getView().getFrameDocument();
+            doc = me.getView().getStageElement();
 
         doc.querySelectorAll(".editable").forEach(function (element) {
-            element.addEventListener("input", me.frameContentChanged.bind(me), false);
+            element.addEventListener("input", me.stageContentChanged.bind(me), false);
         });
     },
-    frameContentChanged: function (event) {
-        console.log('LiveView.frameContentChanged', event);
+    stageContentChanged: function (event) {
+        console.log('LiveView.stageContentChanged', event);
         this.getView().fireEvent('frameContentChanged', event);
     },
 
@@ -68,86 +71,45 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
             view.fireEvent('pugUpdated', view);
         }
     },
-
     renderPug: async function (data) {
-        console.log('Rendering Pug with data:', data);
-        let me = this,
-            view = me.getView(),
-            model = me.getViewModel(),
-            template = model.get('template');
-        view.setLoading('Aufbereiten...');
-        fs.mkdirSync('/templates', { recursive: true });
-        let pug = window.require('pug');
-        let filename = `/templates/${template}.pug`;
-        let options = {
-            filename,
-            basedir: '/templates',
-            plugins: [{
-                read(path) {
-                    return fs.readFileSync(path, 'utf8');
-                }
-            }]
-        };
-        // merge data into options
-        options = Object.assign(data, options);
-        console.log('Rendering Pug with options:', options);
+        if (data) {
+            console.log('Rendering Pug with data:', data);
+            let me = this,
+                view = me.getView(),
+                model = me.getViewModel(),
+                template = model.get('template');
+            view.setLoading('Aufbereiten...');
+            fs.mkdirSync('/templates', { recursive: true });
+            let pug = window.require('pug');
+            let filename = `/templates/${template}.pug`;
+            let options = {
+                filename,
+                basedir: '/templates',
+                plugins: [{
+                    read(path) {
+                        return fs.readFileSync(path, 'utf8');
+                    }
+                }]
+            };
+            // merge data into options
+            options = Object.assign(data, options);
+            console.log('Rendering Pug with options:', options);
 
-        try {
-            let html = pug.render(fs.readFileSync(filename, 'utf8'), options);
-            model.set('rendered', html);
-            console.log('Rendered HTML set in iframe', view.getId() + '-iframe');
+            try {
+                let html = pug.render(fs.readFileSync(filename, 'utf8'), options);
+                model.set('rendered', html);
+                const stage = view.getComponent('stage').getEl().dom;
 
-            const iframe = view.getComponent('frame').getEl().dom;
-            const scrollY = me.scrollRestorePending && Number.isFinite(me.savedScrollY)
-                ? me.savedScrollY
-                : iframe.contentWindow.scrollY;
-            const generation = me.renderGeneration = (me.renderGeneration || 0) + 1;
-            me.savedScrollY = scrollY;
-            me.scrollRestorePending = true;
+                stage.innerHTML = html;
 
-            iframe.addEventListener('load', async () => {
-                if (generation !== me.renderGeneration) return;
+                me.onStagedLoaded();
+            } catch (err) {
+                console.error('Error rendering Pug:', err);
+            }
+            view.setLoading(false);
 
-                const doc = iframe.contentDocument;
-                await doc.fonts?.ready;
-                await Promise.all(
-                    Array.from(doc.images, image => image.decode().catch(() => { }))
-                );
-
-                if (generation !== me.renderGeneration) return;
-
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        if (generation !== me.renderGeneration) return;
-                        iframe.contentWindow.scrollTo(0, scrollY);
-                        me.savedScrollY = iframe.contentWindow.scrollY;
-                        me.scrollRestorePending = false;
-                    });
-                });
-            }, { once: true });
-
-            //iframe.srcdoc = html;
-
-            const doc = iframe.contentDocument;
-
-            doc.open();
-            doc.write(html);
-            doc.close();
-
-        } catch (e) {
-            console.error('Error rendering Pug template:', e);
-            Ext.toast({
-                html: 'Error rendering Pug template: ' + e.message,
-                title: 'Error',
-                width: 300,
-                align: 't'
-            });
         }
-        // let html = pug.render(fs.readFileSync(filename, 'utf8'), options);
-        // model.set('rendered', html);
-        // console.log('Rendered HTML set in iframe', view.getId() + '-iframe');
-        // view.getComponent('frame').getEl().dom.srcdoc = html;
-        view.setLoading(false);
-    }
+    },
 
-}); console.log('LiveView.loaded');
+
+}); 
