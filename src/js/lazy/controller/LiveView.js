@@ -126,7 +126,12 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
                 });
             }, { once: true });
 
-            iframe.srcdoc = html;
+            //iframe.srcdoc = html;
+            const doc = iframe.contentDocument;
+
+            doc.open();
+            doc.write(html);
+            doc.close();
         } catch (e) {
             console.error('Error rendering Pug template:', e);
             Ext.toast({
@@ -143,4 +148,4 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
         view.setLoading(false);
     }
 
-});console.log('LiveView.loaded');
+}); console.log('LiveView.loaded');
