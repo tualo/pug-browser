@@ -57,9 +57,11 @@ Ext.define('Tualo.pugBrowser.lazy.LiveView', {
             xtype: 'component',
             itemId: 'stage',
             autoEl: {
-                tag: 'div',
+                tag: 'iframe',
                 id: '{id}-stage',
-                style: 'width:100%;height:100%;    scroll-behavior: smooth; overflow: scroll; box-sizing: border-box;',
+                //cls: 'pug-browser-stage',
+                style: 'width:100%;height:100%;scroll-behavior: smooth; '
+                //   scroll-behavior: smooth; overflow: scroll; box-sizing: border-box;',
                 // src: 'about:blank'
             }
         }

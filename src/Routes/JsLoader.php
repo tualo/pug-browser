@@ -21,8 +21,8 @@ class JsLoader extends \Tualo\Office\Basic\RouteWrapper
                 RouteSecurityHelper::serveSecureStaticFile(
                     $matches['file'],
                     $path . '/',
-                    ['js'],
-                    ['js' => 'application/javascript']
+                    ['js', 'css'],
+                    ['js' => 'application/javascript', 'css' => 'text/css']
                 );
             }
         }, ['get'], false);

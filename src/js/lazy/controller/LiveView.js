@@ -16,21 +16,10 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
             view = me.getView();
 
         const stage = view.getComponent('stage').getEl().dom;
-        /*
-        iframe.addEventListener('load', () => {
-            me.onStagedLoaded();
-            view.fireEvent('frameLoaded');
-        });
-        */
-        console.warn('Stage element event init missing');
-    },
-
-    onStagedLoaded: function () {
-        let me = this,
-            doc = me.getView().getStageElement();
-
-        doc.querySelectorAll(".editable").forEach(function (element) {
-            element.addEventListener("input", me.stageContentChanged.bind(me), false);
+        stage.addEventListener('input', function (event) {
+            if (event.target.closest && event.target.closest('.editable')) {
+                me.stageContentChanged(event);
+            }
         });
     },
     stageContentChanged: function (event) {
@@ -98,11 +87,15 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
             try {
                 let html = pug.render(fs.readFileSync(filename, 'utf8'), options);
                 model.set('rendered', html);
-                const stage = view.getComponent('stage').getEl().dom;
+                const stage = view.getComponent('stage').getEl().dom.contentWindow.document.body;
+                const target = stage.cloneNode(false);
+                target.innerHTML = html;
 
-                stage.innerHTML = html;
-
-                me.onStagedLoaded();
+                if (typeof window.morphdom !== 'function') {
+                    throw new Error('morphdom is not loaded');
+                }
+                console.log('Morphing DOM from', stage, 'to', target);
+                window.morphdom(stage, target, { childrenOnly: true });
             } catch (err) {
                 console.error('Error rendering Pug:', err);
             }

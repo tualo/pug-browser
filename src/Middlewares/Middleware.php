@@ -13,6 +13,7 @@ class Middleware implements IMiddleware
             try {
                 TualoApplication::javascript('pug-browser-lib', "./jspugbrowser/lib/pugjs/pug.js", []);
                 TualoApplication::module('pug-browser', "./jspugbrowser/lib/zenfs/app.js", []);
+                TualoApplication::stylesheet("./jspugbrowser/lib/css/pug-browser.css");
             } catch (\Exception $e) {
                 TualoApplication::set('maintanceMode', 'on');
                 TualoApplication::addError($e->getMessage());

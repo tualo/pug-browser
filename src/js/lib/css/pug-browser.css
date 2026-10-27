@@ -1,0 +1,14 @@
+.pug-browser-stage {
+    all: revert;
+
+    /* Vererbte Werte aus dem umgebenden Ext-JS-Layout zurücksetzen */
+    font: initial;
+    color: initial;
+    line-height: normal;
+    text-align: initial;
+    white-space: normal;
+}
+
+.pug-browser-stage :where(*) {
+    all: revert;
+}
