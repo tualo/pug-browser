@@ -44,14 +44,12 @@ Ext.define('Tualo.pugBrowser.lazy.LiveView', {
         let stage = this.getComponent('stage');
         return stage.getEl().dom;
     },
-    /*
-    getFrameDocument: function () {
+    getStageDocument: function () {
         console.log('Getting frame document');
-        let frame = this.getComponent('frame');
+        let frame = this.getComponent('stage');
         let iframe = frame.getEl().dom;
         return iframe.contentWindow.document;
     },
-    */
     items: [
         {
             xtype: 'component',

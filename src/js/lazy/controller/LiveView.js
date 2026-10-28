@@ -13,14 +13,22 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
     },
     initStageLoad: function () {
         let me = this,
-            view = me.getView();
+            view = me.getView(),
+            iframe = view.getComponent('stage').getEl().dom,
+            stageDocument = iframe.contentWindow.document;
 
-        const stage = view.getComponent('stage').getEl().dom;
-        stage.addEventListener('input', function (event) {
-            if (event.target.closest && event.target.closest('.editable')) {
-                me.stageContentChanged(event);
-            }
-        });
+        if (me.stageDocument && me.stageInputHandler) {
+            me.stageDocument.removeEventListener('input', me.stageInputHandler);
+        }
+
+        me.stageDocument = stageDocument;
+        me.stageInputHandler = function (event) {
+            console.log('LiveView input event:', event, event.target.closest);
+            //if (event.target.closest && event.target.closest('.editable')) {
+            me.stageContentChanged(event);
+            //}
+        };
+        stageDocument.addEventListener('input', me.stageInputHandler);
     },
     stageContentChanged: function (event) {
         console.log('LiveView.stageContentChanged', event);
@@ -96,6 +104,8 @@ Ext.define('Tualo.pugBrowser.lazy.controller.LiveView', {
                 }
                 console.log('Morphing DOM from', stage, 'to', target);
                 window.morphdom(stage, target, { childrenOnly: true });
+                console.log('Morphdom applied successfully');
+                me.initStageLoad();
             } catch (err) {
                 console.error('Error rendering Pug:', err);
             }
