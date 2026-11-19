@@ -15,6 +15,7 @@ class Middleware implements IMiddleware
                 TualoApplication::module('pug-browser', "./jspugbrowser/lib/zenfs/app.js", []);
                 TualoApplication::stylesheet("./jspugbrowser/lib/css/pug-browser.css");
             } catch (\Exception $e) {
+                TualoApplication::set('message', 'Das Sytsem ist derzeit nicht erreichbar (PugBrowser)');
                 TualoApplication::set('maintanceMode', 'on');
                 TualoApplication::addError($e->getMessage());
             }
