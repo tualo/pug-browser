@@ -6,6 +6,7 @@ Ext.define('Tualo.pugBrowser.lazy.mixins.LiveViewFunctions', {
         if (toGlobal) {
             toGlobal.count = liveViewFunctions.count;
             toGlobal.empty = liveViewFunctions.empty;
+            toGlobal.keysort = liveViewFunctions.keysort;
             toGlobal.base64file = liveViewFunctions.base64file;
             toGlobal.ltrim = liveViewFunctions.ltrim;
             toGlobal.rtrim = liveViewFunctions.rtrim;
@@ -23,6 +24,15 @@ Ext.define('Tualo.pugBrowser.lazy.mixins.LiveViewFunctions', {
     },
 
     liveViewFunctions: {
+        keysort: function (data, key, direction = 'asc') {
+            return data.sort((a, b) => {
+                if (direction === 'asc') {
+                    return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0;
+                } else {
+                    return a[key] > b[key] ? -1 : a[key] < b[key] ? 1 : 0;
+                }
+            });
+        },
         count: function (list) {
             if (Ext.isEmpty(list)) return 0;
             return list.length;
